@@ -22,16 +22,17 @@ from arm import *
 ##Control para guardar variables
 
 ##Se instancia un control
+brazo = Arm()
 control = Controller()
 
 
 ##Para salir del programa, presionar Esc
-def on_key(window, key, scancode, action, mods):
-    if action != glfw.PRESS:
-        return
-    
-    elif key == glfw.KEY_ESCAPE:
-        sys.exit()
+#def on_key(window, key, scancode, action, mods):
+#    if action != glfw.PRESS:
+#        return
+#    
+#    elif key == glfw.KEY_ESCAPE:
+#        sys.exit()
 
 
 
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     glfw.make_context_current(window)
 
     # Connecting the callback function 'on_key' to handle keyboard events
-    glfw.set_key_callback(window, on_key)
+    glfw.set_key_callback(window, control.on_key)
 
     # Pipeline
     pipeline = ls.SimplePhongShaderProgram()
@@ -72,7 +73,7 @@ if __name__ == "__main__":
     
     t0 = 0
     camera_theta = 0
-    brazo = Arm()
+    
     brazo.create_parts()
     
     while not glfw.window_should_close(window):
@@ -86,17 +87,13 @@ if __name__ == "__main__":
         t0 = t1
 
         #Para rotar la cámara
-        if (glfw.get_key(window, glfw.KEY_LEFT) == glfw.PRESS):
-            camera_theta -= 2 * dt
+        control.set_dt(dt * 6)
 
-        if (glfw.get_key(window, glfw.KEY_RIGHT) == glfw.PRESS):
-            camera_theta += 2* dt
-
-
+        brazo.rotate_arm0(control.angle,control.rotation)
         #Manejo de la cámara
-        R = 13
-        camX = R * np.sin(camera_theta+3)
-        camY = R * np.cos(camera_theta+3)
+        R = 15
+        camX = R * np.sin(control.camera_angle+3)
+        camY = R * np.cos(control.camera_angle+3)
         viewPos = np.array([camX, camY,3])
         view = tr.lookAt(
             viewPos,
