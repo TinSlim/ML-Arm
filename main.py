@@ -18,12 +18,14 @@ import Modulo.lighting_shaders as ls
 
 from controller import *
 from arm import *
+from ball import *
 
 ##Control para guardar variables
 
 ##Se instancia un control
 brazo = Arm()
 control = Controller()
+ball = Ball(0,0,0)
 
 
 ##Para salir del programa, presionar Esc
@@ -75,7 +77,9 @@ if __name__ == "__main__":
     camera_theta = 0
     
     brazo.create_parts()
+    ball.create_parts()
     
+    a = True
     while not glfw.window_should_close(window):
         # Using GLFW to check for input events
         glfw.poll_events()
@@ -89,15 +93,35 @@ if __name__ == "__main__":
         #Para rotar la cámara
         control.set_dt(dt * 6)
 
-        brazo.rotate_arm0(control.angle,control.rotation)
+        #brazo.rotate_arm0(control.angle,control.rotation)
+        #brazo.rotate_arm1(control.angle,control.rotation)
+        #10.5 en y
+        if a:
+            a = False
+            ball.move(0.5,0.2,6) #10.5 brazo radio
+
+        brazo.actualizate_arms()
+        largo_brazo0 = 6-0.5
+        largo_brazo1 = 10.5-6
+        brazo.arm0_angle = control.angle0
+        brazo.arm1_rotation = control.rotation1
+        arm_final = [np.sin(brazo.arm0_rotation) * np.cos(brazo.arm0_angle) * (largo_brazo0 + largo_brazo1*np.cos(brazo.arm1_rotation))
+        ,np.sin(brazo.arm0_rotation) * np.sin(brazo.arm0_angle) * (largo_brazo0 + largo_brazo1*np.cos(brazo.arm1_rotation)),
+        np.cos(brazo.arm0_rotation)  * (largo_brazo0 + largo_brazo1*np.cos(brazo.arm1_rotation))
+        ]
+        ball.translate(arm_final[1],-arm_final[0],arm_final[2]) #10.5 brazo radio
+        print(arm_final)               
+        #print(brazo.arm1_rotation)
+        brazo.arm0_rotation = control.rotation0
+        
         #Manejo de la cámara
-        R = 15
+        R = 20
         camX = R * np.sin(control.camera_angle+3)
         camY = R * np.cos(control.camera_angle+3)
-        viewPos = np.array([camX, camY,3])
+        viewPos = np.array([camX, camY,10])
         view = tr.lookAt(
             viewPos,
-            np.array([0,0,-1]),
+            np.array([0,0,5]), # a dnd mira
             np.array([0,0,1])
         )
 
@@ -107,6 +131,8 @@ if __name__ == "__main__":
         # Clearing the screen in both, color and depth
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
+        
+        
 
         # Drawing shapes
         glUseProgram(pipeline.shaderProgram)
@@ -132,6 +158,7 @@ if __name__ == "__main__":
 
         #Se usa el pipeline de sombras y luz para el dibujo del pájaro
         sg.drawSceneGraphNode(brazo.big_node, pipeline, "model")
+        sg.drawSceneGraphNode(ball.big_node, pipeline, "model")
 
         
         glUniformMatrix4fv(glGetUniformLocation(pipeline.shaderProgram, "model"), 1, GL_TRUE,
