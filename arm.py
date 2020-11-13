@@ -8,15 +8,16 @@ import Modulo.lighting_shaders as ls
 import numpy as np
 class Arm:
 
-    def __init__(self):
-        self.arm0_angle = 0
+    def __init__(self,ball):
+        self.ball = ball
+        self.angle = 0
         self.arm0_rotation = 0
         self.arm1_rotation = 0
         self.arm0_large = 6.5-0.5
         self.arm1_large = 10.5-6
         self.point = [
-            (np.sin(self.arm0_rotation) * np.sin(self.arm0_angle) * self.arm0_large) + (self.arm1_large * np.sin(self.arm0_angle) * np.sin(self.arm1_rotation + self.arm0_rotation)),# * np.sin(brazo.arm1_rotation + brazo.arm0_rotation))
-            -1* ( (np.sin(self.arm0_rotation) * np.cos(self.arm0_angle) * self.arm0_large) + (self.arm1_large * np.cos(self.arm0_angle) * np.sin(self.arm1_rotation + self.arm0_rotation)) ),# * -np.sin(brazo.arm1_rotation + brazo.arm0_rotation))
+            (np.sin(self.arm0_rotation) * np.sin(self.angle) * self.arm0_large) + (self.arm1_large * np.sin(self.angle) * np.sin(self.arm1_rotation + self.arm0_rotation)),# * np.sin(brazo.arm1_rotation + brazo.arm0_rotation))
+            -1* ( (np.sin(self.arm0_rotation) * np.cos(self.angle) * self.arm0_large) + (self.arm1_large * np.cos(self.angle) * np.sin(self.arm1_rotation + self.arm0_rotation)) ),# * -np.sin(brazo.arm1_rotation + brazo.arm0_rotation))
             (np.cos(self.arm0_rotation)  * self.arm0_large )+ (self.arm1_large* np.cos(self.arm1_rotation + self.arm0_rotation))
         ]
 
@@ -50,31 +51,41 @@ class Arm:
         
         self.big_node = node_all
     
-    def rotate_arm0(self,value,value2):
-        arm0 = sg.findNode(self.big_node, "arms0")
-        arm0.transform = tr.matmul([tr.translate(0,0,0.5),tr.rotationZ(self.arm0_angle),tr.rotationX(self.arm0_rotation),tr.translate(0,0,3)])
+    def add_to_angle(self, value):
+        self.angle += value
+    
+    def add_to_arm0_rotation(self, value):
+        self.arm0_rotation += value
 
-    def rotate_arm1(self,value,value2):
-        arm1 = sg.findNode(self.big_node, "arms1")
-        #arm1.transform = tr.matmul([tr.identity(),tr.identity()])
-        arm1.transform = tr.matmul([tr.translate(0,0,2.5),tr.rotationZ(value),tr.rotationX(value2),tr.translate(0,0,2)])
+    def add_to_arm1_rotation(self, value):
+        self.arm1_rotation += value
 
     def actualize_arms(self):
         arm0 = sg.findNode(self.big_node, "arms0")
-        arm0.transform = tr.matmul([tr.translate(0,0,0.5),tr.rotationZ(self.arm0_angle),tr.rotationX(self.arm0_rotation),tr.translate(0,0,3)])
+        arm0.transform = tr.matmul([tr.translate(0,0,0.5),tr.rotationZ(self.angle),tr.rotationX(self.arm0_rotation),tr.translate(0,0,3)])
         arm1 = sg.findNode(self.big_node, "arms1")
         #arm1.transform = tr.matmul([tr.identity(),tr.identity()])
         arm1.transform = tr.matmul([tr.translate(0,0,2.5),tr.rotationX(self.arm1_rotation),tr.translate(0,0,2)])
 
     def actualize_point(self):
         self.point = [
-            (np.sin(self.arm0_rotation) * np.sin(self.arm0_angle) * self.arm0_large) + (self.arm1_large * np.sin(self.arm0_angle) * np.sin(self.arm1_rotation + self.arm0_rotation)),
-            -1 * ( (np.sin(self.arm0_rotation) * np.cos(self.arm0_angle) * self.arm0_large) + (self.arm1_large * np.cos(self.arm0_angle) * np.sin(self.arm1_rotation + self.arm0_rotation)) ),# * -np.sin(brazo.arm1_rotation + brazo.arm0_rotation))
+            (np.sin(self.arm0_rotation) * np.sin(self.angle) * self.arm0_large) + (self.arm1_large * np.sin(self.angle) * np.sin(self.arm1_rotation + self.arm0_rotation)),
+            -1 * ( (np.sin(self.arm0_rotation) * np.cos(self.angle) * self.arm0_large) + (self.arm1_large * np.cos(self.angle) * np.sin(self.arm1_rotation + self.arm0_rotation)) ),# * -np.sin(brazo.arm1_rotation + brazo.arm0_rotation))
             # * np.sin(brazo.arm1_rotation + brazo.arm0_rotation))
             (np.cos(self.arm0_rotation)  * self.arm0_large )+ (self.arm1_large* np.cos(self.arm1_rotation + self.arm0_rotation))
         ]
 
-
+    def distance_ball_point(self):
+        X_2 = (self.ball.x - self.point[0])**2
+        Y_2 = (self.ball.y - self.point[1])**2
+        Z_2 = (self.ball.z - self.point[2] )**2
+        distance = (X_2+Y_2+Z_2)**2
+        if distance<0.05:
+            print("catched")
+            self.ball.catched = True
+        else:
+            print("nono")
+        
 
 
 

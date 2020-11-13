@@ -11,7 +11,12 @@ class Ball:
         self.x = x
         self.y = y
         self.z = z
+        self.catched = False
+        self.distance = (self.x**2 + self.y**2 +self.z**2)**(1/2)
         
+    def actualize_distance(self):
+        self.distance = (self.x**2 + self.y**2 +self.z**2)**(1/2)
+
     def setX(self,new_x):
         self.x = new_x
     
