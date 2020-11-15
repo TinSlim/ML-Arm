@@ -4,6 +4,7 @@ import Modulo.scene_graph as sg
 import Modulo.easy_shaders as es
 import Modulo.readobj as rbj
 import Modulo.lighting_shaders as ls
+import random
 
 class Ball:
 
@@ -11,6 +12,7 @@ class Ball:
         self.x = x
         self.y = y
         self.z = z
+        self.ponderator = 1
         self.catched = False
         self.distance = (self.x**2 + self.y**2 +self.z**2)**(1/2)
         
@@ -50,5 +52,39 @@ class Ball:
         self.x = x
         self.y = y
         self.z = z
+        cube = sg.findNode(self.big_node, "cube")
+        cube.transform =([tr.translate(self.x,self.y,self.z),tr.scale(0.5,0.5,0.5)]) 
+
+    def random_pos(self):
+        x_r = 10
+        y_r = 10
+        z_r = 10
+        cantidad = 0
+        while ((x_r**2) + (y_r**2) + (z_r**2))**(1/2) >10.5 or z_r<0:
+            a =random.choice([True, False])
+            b = random.choice([True, False])
+            x_r = round(random.random() * self.ponderator,3)
+            y_r = round(random.random() * self.ponderator,3)
+            z_r = round(random.random() * self.ponderator,3)
+            if a and b:
+                x_r = x_r * -1
+                y_r = y_r * -1
+            elif a:
+                x_r = x_r * -1
+            else:
+                y_r = y_r *-1
+
+            if cantidad == 3:
+                self.ponderator = 1
+            cantidad+=1
+        
+        print(x_r,",",y_r,",",z_r,",")
+        self.ponderator+=0.1
+        self.x = x_r
+        self.y = y_r
+        self.z = z_r
+        return f"{x_r},{y_r},{z_r},"
+        
+    def actualize_img(self):
         cube = sg.findNode(self.big_node, "cube")
         cube.transform =([tr.translate(self.x,self.y,self.z),tr.scale(0.5,0.5,0.5)]) 

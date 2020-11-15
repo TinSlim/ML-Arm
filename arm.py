@@ -83,9 +83,9 @@ class Arm:
         if distance<0.05:
             print("catched")
             self.ball.catched = True
-        else:
-            print("nono")
         
+    def get_rotations(self):
+        return f"{round(self.angle,3)},{round(self.arm0_rotation,3)},{round(self.arm1_rotation,3)}"
 
 
 
