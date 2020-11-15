@@ -19,23 +19,23 @@ import Modulo.lighting_shaders as ls
 from controller import *
 from arm import *
 from ball import *
+from classifier import *
 
 ##Control para guardar variables
 
 ##Se instancia un control
-ball = Ball(0,0,0)
+new_ball_value = False
+
+
+ball = Ball(10,10,10)
+ball.random_pos()
 brazo = Arm(ball)
-control = Controller(brazo)
 
+classifier_new = Classifier("data.csv")
+classifier_new.get_data()
+classifier_new.fit()
 
-
-##Para salir del programa, presionar Esc
-#def on_key(window, key, scancode, action, mods):
-#    if action != glfw.PRESS:
-#        return
-#    
-#    elif key == glfw.KEY_ESCAPE:
-#        sys.exit()
+control = Controller(brazo,classifier_new)
 
 
 
@@ -108,6 +108,11 @@ if __name__ == "__main__":
             ball.translate(brazo.point[0],brazo.point[1],brazo.point[2]) #10.5 brazo radio
         else:
             brazo.distance_ball_point()
+
+        if new_ball_value:
+            print("nice")
+            new_ball_value = False
+
         #Manejo de la cámara
         R = 20
         camX = R * np.sin(control.camera_angle+3)
