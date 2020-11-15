@@ -49,7 +49,7 @@ if __name__ == "__main__":
     width = 600
     height = 600
 
-    window = glfw.create_window(width, height, "Bird", None, None)
+    window = glfw.create_window(width, height, "Catched", None, None)
 
     if not window:
         glfw.terminate()
