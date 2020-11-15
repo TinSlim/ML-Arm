@@ -26,18 +26,31 @@ class Controller():
 
         elif key == glfw.KEY_A:
             self.arm.add_to_angle(0.05)
+            print("angle+")
         elif key == glfw.KEY_S:
             self.arm.add_to_angle(-0.05)
+            print("angle-")
 
         elif key == glfw.KEY_D:
             self.arm.add_to_arm0_rotation(0.05)
+            print("arm0+")
         elif key == glfw.KEY_F:
             self.arm.add_to_arm0_rotation(-0.05)
+            print("arm0-")
 
         elif key == glfw.KEY_Z:
             self.arm.add_to_arm1_rotation(0.05)
+            print("arm1+")
         elif key == glfw.KEY_X:
             self.arm.add_to_arm1_rotation(-0.05)
+            print("arm1-")
+
+        elif key == glfw.KEY_SPACE:
+            pos = self.arm.ball.random_pos()
+            self.arm.ball.actualize_img()
+            rot = self.arm.get_rotations()
+            print("\n \n \n \n \n \n \n \n \n \n")
+            print(pos+rot)
 
         elif key == glfw.KEY_ESCAPE:
             sys.exit()
