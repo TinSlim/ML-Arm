@@ -57,7 +57,14 @@ class Controller():
             }
             self.auto_action(switcher[prediction])
 
-
+        elif key == glfw.KEY_L:
+            x = self.arm.ball.x
+            y = self.arm.ball.y
+            z = self.arm.ball.z
+            angle = round(self.arm.angle,3)
+            rot0 = round(self.arm.arm0_rotation,3)
+            rot1 = round(self.arm.arm1_rotation,3)
+            print(f"{x},{y},{z},{angle},{rot0},{rot1},")
 
         elif key == glfw.KEY_LEFT:
             self.rotate_camera_angle(-2 * self.dt)
