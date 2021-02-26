@@ -1,9 +1,8 @@
-import Modulo.transformations as tr
-import Modulo.basic_shapes as bs
-import Modulo.scene_graph as sg
-import Modulo.easy_shaders as es
-import Modulo.readobj as rbj
-import Modulo.lighting_shaders as ls
+import modulo.transformations as tr
+import modulo.basic_shapes as bs
+import modulo.scene_graph as sg
+import modulo.easy_shaders as es
+
 import random
 
 class Ball:

@@ -1,31 +1,19 @@
 
-
-##Bibliotecas
 import glfw
 from OpenGL.GL import *
 import OpenGL.GL.shaders
-import numpy as np
-import sys
 
-##Módulos
-
-import Modulo.transformations as tr
-import Modulo.basic_shapes as bs
-import Modulo.scene_graph as sg
-import Modulo.easy_shaders as es
-import Modulo.readobj as rbj
-import Modulo.lighting_shaders as ls
+import modulo.easy_shaders as es
+import modulo.lighting_shaders as ls
 
 from controller import *
 from arm import *
 from ball import *
 from classifier import *
 
-##Control para guardar variables
 
-##Se instancia un control
+
 new_ball_value = False
-
 
 ball = Ball(10,10,10)
 ball.random_pos()
@@ -45,7 +33,6 @@ if __name__ == "__main__":
     if not glfw.init():
         sys.exit()
 
-    #Tamaño ventana
     width = 600
     height = 600
 
@@ -98,14 +85,14 @@ if __name__ == "__main__":
         #10.5 en y
         if a:
             a = False
-            ball.move(1,1,6) #10.5 brazo radio
+            ball.move(1,1,6) #10.5 arm radio
 
         brazo.actualize_arms()
 
         
         brazo.actualize_point()
         if ball.catched:
-            ball.translate(brazo.point[0],brazo.point[1],brazo.point[2]) #10.5 brazo radio
+            ball.translate(brazo.point[0],brazo.point[1],brazo.point[2]) #10.5 arm radio
         else:
             brazo.distance_ball_point()
 
@@ -113,21 +100,21 @@ if __name__ == "__main__":
             print("nice")
             new_ball_value = False
 
-        #Manejo de la cámara
+        # Camera
         R = 20
         camX = R * np.sin(control.camera_angle+3)
         camY = R * np.cos(control.camera_angle+3)
         viewPos = np.array([camX, camY,10])
         view = tr.lookAt(
             viewPos,
-            np.array([0,0,5]), # a dnd mira
+            np.array([0,0,5]), # look to
             np.array([0,0,1])
         )
 
-        # Setting up the projection transform
+        # Projection
         projection = tr.perspective(60, float(width)/float(height), 0.1, 100)
 
-        # Clearing the screen in both, color and depth
+        # Clearing screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         
@@ -155,7 +142,7 @@ if __name__ == "__main__":
         glUniformMatrix4fv(glGetUniformLocation(pipeline.shaderProgram, "model"), 1, GL_TRUE, tr.uniformScale(3))
 
 
-        #Se usa el pipeline de sombras y luz para el dibujo del pájaro
+        # Draws arm and ball
         sg.drawSceneGraphNode(brazo.big_node, pipeline, "model")
         sg.drawSceneGraphNode(ball.big_node, pipeline, "model")
 

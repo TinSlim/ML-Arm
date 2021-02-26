@@ -1,12 +1,13 @@
-from sklearn import svm
+#from sklearn import svm
 from sklearn.neural_network import MLPClassifier
-
+from sklearn import tree
 import pandas as pd
 
 class Classifier:
     def __init__(self,file_name):
         self.file_name = file_name
         self.clf = MLPClassifier((2, ), random_state = 0, learning_rate_init = 0.01, activation = "logistic")
+        self.clf = tree.DecisionTreeClassifier()
 
     def get_data(self):
         self.data = pd.read_csv(self.file_name,index_col=False)

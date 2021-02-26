@@ -1,5 +1,4 @@
 import glfw
-import sys
 
 class Controller():
     
